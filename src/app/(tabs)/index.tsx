@@ -1,38 +1,17 @@
-import { Image, StyleSheet } from "react-native";
-
-import { Text, View } from "@/components/Themed";
-import Colors from "@/constants/Colors";
+import { View } from "@/components/Themed";
+import ProductListItem from "@/constants/ProductListItem";
 import products from "@/constants/appData/products";
+import { FlatList, ScrollView } from "react-native";
 
-const product = products[0];
-
-export default function TabOneScreen() {
+export default function MenuScreen() {
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: product.image }} style={styles.image} />
-      <Text style={styles.title}>{product.name}</Text>
-      <Text style={styles.price}>${product.price}</Text>
-    </View>
+    <FlatList
+      keyExtractor={(item) => item.id}
+      data={products}
+      renderItem={({ item }) => (
+        <ProductListItem key={item.id} product={item} />
+      )}
+      numColumns={2}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    padding: 10,
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginVertical: 10,
-  },
-  price: {
-    color: Colors.light.tint,
-    fontWeight: "bold",
-  },
-  image: {
-    width: "100%",
-    aspectRatio: 1,
-  },
-});
