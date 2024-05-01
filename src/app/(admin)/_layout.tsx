@@ -40,7 +40,7 @@ export default function TabLayout() {
             <TabBarIcon name="cutlery" color={color} />
           ),
           headerRight: () => (
-            <Link href="/cart" asChild>
+            <Link href="/create" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
@@ -57,6 +57,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen name="[id]" options={{ href: null }} />
+      <Tabs.Screen name="create" options={{ href: null }} />
 
       <Tabs.Screen
         name="orders"
