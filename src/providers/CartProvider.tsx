@@ -4,6 +4,8 @@ import uuid from "react-native-uuid";
 
 export type CartType = {
   items: CartItem[];
+  totalPrice: number;
+  totalQuantity: number;
   onAddItem: (product: Product, size: PizzaSize) => void;
   onRemoveItem: (id: string) => void;
   onUpdateQuantity: (action: QuantityAction, id: string) => void;
@@ -11,6 +13,8 @@ export type CartType = {
 
 const cartInitialState: CartType = {
   items: [],
+  totalPrice: 0,
+  totalQuantity: 0,
   onAddItem: () => {},
   onRemoveItem: () => {},
   onUpdateQuantity: () => {},
@@ -20,6 +24,15 @@ const CartContext = createContext<CartType>(cartInitialState);
 
 const CartProvider = ({ children }: PropsWithChildren) => {
   const [items, setItems] = useState<CartItem[]>([]);
+
+  const totalPrice = Number(
+    items
+      .reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+      .toFixed(2)
+  );
+  const totalQuantity = Number(
+    items.reduce((acc, item) => acc + item.quantity, 0).toFixed(2)
+  );
 
   const onAddItem = (product: Product, size: PizzaSize) => {
     const newCartItem: CartItem = {
@@ -70,11 +83,16 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  console.log(items);
-
   return (
     <CartContext.Provider
-      value={{ items, onAddItem, onUpdateQuantity, onRemoveItem }}
+      value={{
+        items,
+        totalPrice,
+        totalQuantity,
+        onAddItem,
+        onUpdateQuantity,
+        onRemoveItem,
+      }}
     >
       {children}
     </CartContext.Provider>

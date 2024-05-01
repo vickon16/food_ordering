@@ -3,9 +3,10 @@ import { FlatList, Image, Platform, StyleSheet } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { useCart } from "@/providers/CartProvider";
 import CartListItem from "@/components/CartListItem";
+import Button from "@/components/Button";
 
 export default function CartScreen() {
-  const { items } = useCart();
+  const { items, totalPrice, totalQuantity } = useCart();
 
   return (
     <View style={styles.container}>
@@ -30,6 +31,17 @@ export default function CartScreen() {
         />
       )}
 
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalMediumText}>
+          Qtn : <Text style={styles.totalBoldText}>{totalQuantity}</Text>
+        </Text>
+        <Text style={styles.totalMediumText}>
+          Total : <Text style={styles.totalBoldText}>${totalPrice}</Text>
+        </Text>
+      </View>
+
+      <Button text="Checkout" />
+
       {/* Use a light status bar on iOS to account for the black space above the cart */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>
@@ -50,5 +62,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
     color: "gray",
+  },
+  totalContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 8,
+  },
+  totalMediumText: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  totalBoldText: {
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });

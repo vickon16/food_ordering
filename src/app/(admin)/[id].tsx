@@ -1,61 +1,63 @@
 import Colors from "@/constants/Colors";
 import products, { defaultPizzaImage } from "@/constants/appData/products";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Image, StyleSheet } from "react-native";
+import { Image, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "@/components/Themed";
 import { useState } from "react";
-import CartButton from "@/components/CartButton";
+import Button from "@/components/Button";
 import { PizzaSize } from "@/types";
 import { useCart } from "@/providers/CartProvider";
+import { FontAwesome } from "@expo/vector-icons";
+import { Link } from "expo-router";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
 const ProductIdScreen = () => {
   const { onAddItem } = useCart();
   const router = useRouter();
-  const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
 
   const { id } = useLocalSearchParams();
   const product = products.find((product) => product.id === id);
   if (!product) return <Text>Product not found</Text>;
 
-  const addToCart = () => {
-    onAddItem(product, selectedSize);
-    router.push("/cart");
-  };
-
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: product.name }} />
+      <Stack.Screen
+        options={{
+          title: product.name,
+          headerBackVisible: true,
+          headerLeft: () => (
+            <FontAwesome
+              name="chevron-left"
+              onPress={() => router.back()}
+              size={16}
+              color={Colors.light.text}
+              style={{ marginLeft: 12 }}
+            />
+          ),
+          headerRight: () => (
+            <Link href="/cart" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="pencil"
+                    size={18}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+        }}
+      />
 
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: product.image || defaultPizzaImage }}
           style={styles.image}
         />
-      </View>
-
-      <Text>Select size</Text>
-
-      <View style={styles.sizes}>
-        {sizes.map((size) => (
-          <Text
-            style={{
-              ...styles.size,
-              backgroundColor: selectedSize === size ? "gainsboro" : "white",
-              color: selectedSize === size ? "black" : "gray",
-            }}
-            key={size}
-            onPress={() => setSelectedSize(size)}
-          >
-            {size}
-          </Text>
-        ))}
-      </View>
-
-      <View style={styles.footer}>
+        <Text style={styles.title}>{product.name}</Text>
         <Text style={styles.price}>${product.price}</Text>
-        <CartButton onPress={addToCart} text="Add to Cart" />
       </View>
     </View>
   );
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "600",
-    marginVertical: 10,
+    marginVertical: 8,
   },
   price: {
     color: Colors.light.tint,
@@ -83,24 +85,12 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+    gap: 8,
   },
   image: {
     width: "80%",
     aspectRatio: 1,
     objectFit: "contain",
-  },
-  sizes: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 16,
-  },
-  size: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 100,
-    fontSize: 16,
-    fontWeight: "500",
   },
   footer: {
     marginTop: "auto",

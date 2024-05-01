@@ -5,6 +5,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import Colors from "../constants/Colors";
 import { useCart } from "../providers/CartProvider";
 import { CartItem } from "../types";
+import CartButton from "./Button";
 
 type CartListItemProps = {
   cartItem: CartItem;

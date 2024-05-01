@@ -2,11 +2,11 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import Colors from "../constants/Colors";
 import { forwardRef } from "react";
 
-type CartButtonProps = {
+type ButtonProps = {
   text: string;
 } & React.ComponentPropsWithoutRef<typeof Pressable>;
 
-const CartButton = forwardRef<View | null, CartButtonProps>(
+const Button = forwardRef<View | null, ButtonProps>(
   ({ text, ...pressableProps }, ref) => {
     return (
       <Pressable ref={ref} {...pressableProps} style={styles.container}>
@@ -31,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CartButton;
+export default Button;
