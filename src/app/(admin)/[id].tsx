@@ -36,7 +36,7 @@ const ProductIdScreen = () => {
             />
           ),
           headerRight: () => (
-            <Link href="/cart" asChild>
+            <Link href={`/(admin)/create?id=${id}`} asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
