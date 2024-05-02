@@ -9,15 +9,14 @@ import { PizzaSize } from "@/types";
 import { useCart } from "@/providers/CartProvider";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link } from "expo-router";
-
-const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
+import { HeaderLeft } from "@/components/Icons";
 
 const ProductIdScreen = () => {
   const { onAddItem } = useCart();
   const router = useRouter();
 
-  const { id } = useLocalSearchParams();
-  const product = products.find((product) => product.id === id);
+  const { menuId } = useLocalSearchParams();
+  const product = products.find((product) => product.id === menuId);
   if (!product) return <Text>Product not found</Text>;
 
   return (
@@ -25,18 +24,8 @@ const ProductIdScreen = () => {
       <Stack.Screen
         options={{
           title: product.name,
-          headerBackVisible: true,
-          headerLeft: () => (
-            <FontAwesome
-              name="chevron-left"
-              onPress={() => router.back()}
-              size={16}
-              color={Colors.light.text}
-              style={{ marginLeft: 12 }}
-            />
-          ),
           headerRight: () => (
-            <Link href={`/(admin)/create?id=${id}`} asChild>
+            <Link href={`/(admin)/menu/create?menuId=${menuId}`} asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome

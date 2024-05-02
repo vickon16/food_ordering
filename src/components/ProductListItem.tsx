@@ -4,7 +4,7 @@ import { Link, useSegments } from "expo-router";
 
 import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
-import { defaultPizzaImage } from "./appData/products";
+import { defaultPizzaImage } from "../constants/appData/products";
 
 type Props = {
   product: Product;
@@ -14,7 +14,14 @@ const ProductListItem = ({ product }: Props) => {
   const segments = useSegments();
 
   return (
-    <Link href={`/${segments[0]}/${product.id}` as any} asChild>
+    <Link
+      href={
+        segments[0] === "(admin)"
+          ? `/(admin)/menu/${product.id}`
+          : `/(user)/menu/${product.id}`
+      }
+      asChild
+    >
       <Pressable style={styles.container}>
         <Image
           source={{ uri: product.image || defaultPizzaImage }}

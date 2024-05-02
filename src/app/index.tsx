@@ -12,6 +12,9 @@ const RootIndex = () => {
       <Link href={"/(admin)"} asChild>
         <Button text="Admin" />
       </Link>
+      <Link href={"/(auth)"} asChild>
+        <Button text="SignIn" />
+      </Link>
     </View>
   );
 };

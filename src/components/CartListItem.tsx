@@ -9,9 +9,10 @@ import CartButton from "./Button";
 
 type CartListItemProps = {
   cartItem: CartItem;
+  noFunction: boolean;
 };
 
-const CartListItem = ({ cartItem }: CartListItemProps) => {
+const CartListItem = ({ cartItem, noFunction }: CartListItemProps) => {
   const { onUpdateQuantity, onRemoveItem } = useCart();
 
   return (
@@ -33,28 +34,38 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
 
       <View style={styles.functionSide}>
         <View style={styles.quantitySelector}>
-          <FontAwesome
-            onPress={() => onUpdateQuantity("dec", cartItem.id)}
-            name="minus"
-            color="gray"
-            style={{ padding: 5 }}
-          />
+          {!noFunction && (
+            <FontAwesome
+              onPress={() => onUpdateQuantity("dec", cartItem.id)}
+              name="minus"
+              color="gray"
+              style={{ padding: 5 }}
+            />
+          )}
 
-          <Text style={styles.quantity}>{cartItem.quantity}</Text>
-          <FontAwesome
-            onPress={() => onUpdateQuantity("inc", cartItem.id)}
-            name="plus"
-            color="gray"
-            style={{ padding: 5 }}
-          />
+          <Text
+            style={[styles.quantity, { paddingRight: !noFunction ? 0 : 10 }]}
+          >
+            {cartItem.quantity}
+          </Text>
+          {!noFunction && (
+            <FontAwesome
+              onPress={() => onUpdateQuantity("inc", cartItem.id)}
+              name="plus"
+              color="gray"
+              style={{ padding: 5 }}
+            />
+          )}
         </View>
 
-        <Text
-          style={styles.removeText}
-          onPress={() => onRemoveItem(cartItem.id)}
-        >
-          remove
-        </Text>
+        {!noFunction && (
+          <Text
+            style={styles.removeText}
+            onPress={() => onRemoveItem(cartItem.id)}
+          >
+            remove
+          </Text>
+        )}
       </View>
     </View>
   );

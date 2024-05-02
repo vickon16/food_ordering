@@ -1,13 +1,12 @@
+import Button from "@/components/Button";
+import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
 import products, { defaultPizzaImage } from "@/constants/appData/products";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Image, StyleSheet } from "react-native";
-import { View, Text } from "@/components/Themed";
-import { useState } from "react";
-import Button from "@/components/Button";
-import { PizzaSize } from "@/types";
 import { useCart } from "@/providers/CartProvider";
-import { FontAwesome } from "@expo/vector-icons";
+import { PizzaSize } from "@/types";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import { Image, StyleSheet } from "react-native";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -16,8 +15,8 @@ const ProductIdScreen = () => {
   const router = useRouter();
   const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
 
-  const { id } = useLocalSearchParams();
-  const product = products.find((product) => product.id === id);
+  const { menuId } = useLocalSearchParams();
+  const product = products.find((product) => product.id === menuId);
   if (!product) return <Text>Product not found</Text>;
 
   const addToCart = () => {
@@ -30,16 +29,6 @@ const ProductIdScreen = () => {
       <Stack.Screen
         options={{
           title: product.name,
-          headerBackVisible: true,
-          headerLeft: () => (
-            <FontAwesome
-              name="chevron-left"
-              onPress={() => router.back()}
-              size={16}
-              color={Colors.light.text}
-              style={{ marginLeft: 12 }}
-            />
-          ),
         }}
       />
 

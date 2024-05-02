@@ -6,6 +6,7 @@ import Colors from "@/constants/Colors";
 import Button from "@/components/Button";
 import products, { defaultPizzaImage } from "@/constants/appData/products";
 import * as ImagePicker from "expo-image-picker";
+import { HeaderLeft } from "@/components/Icons";
 
 const CreateProductScreen = () => {
   const router = useRouter();
@@ -14,7 +15,7 @@ const CreateProductScreen = () => {
   const [error, setError] = useState("");
   const [image, setImage] = useState<string | null>(null);
 
-  const { id } = useLocalSearchParams();
+  const { menuId } = useLocalSearchParams();
 
   const resetFields = () => {
     setName("");
@@ -54,7 +55,7 @@ const CreateProductScreen = () => {
   const onSubmit = () => {
     if (!validateInput()) return;
 
-    if (!!id) {
+    if (!!menuId) {
     } else {
     }
 
@@ -77,7 +78,7 @@ const CreateProductScreen = () => {
   };
 
   const onDelete = () => {
-    if (!id) return;
+    if (!menuId) return;
     console.warn("delete");
   };
 
@@ -85,16 +86,7 @@ const CreateProductScreen = () => {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          headerTitle: !!id ? "Updating Product" : "Create Product",
-          headerLeft: () => (
-            <FontAwesome5
-              name="chevron-left"
-              onPress={() => router.back()}
-              size={16}
-              color={Colors.light.text}
-              style={{ marginLeft: 12 }}
-            />
-          ),
+          headerTitle: !!menuId ? "Updating Product" : "Create Product",
         }}
       />
 
@@ -130,8 +122,8 @@ const CreateProductScreen = () => {
       </View>
 
       {error && <Text style={{ color: "red" }}>{error}</Text>}
-      <Button text={!!id ? "Update" : "Create"} onPress={onSubmit} />
-      {!!id && (
+      <Button text={!!menuId ? "Update" : "Create"} onPress={onSubmit} />
+      {!!menuId && (
         <Text style={styles.textButton} onPress={confirmDelete}>
           Delete
         </Text>

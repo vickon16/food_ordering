@@ -29,36 +29,22 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="menu"
         options={{
-          title: "Menu",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="cutlery" color={color} />
           ),
-          headerRight: () => (
-            <Link href="/cart" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="shopping-cart"
-                    size={25}
-                    color={Colors[colorScheme ?? "light"].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerShown: false,
         }}
       />
 
-      <Tabs.Screen name="[id]" options={{ href: null }} />
+      <Tabs.Screen name="index" options={{ href: null }} />
 
       <Tabs.Screen
         name="orders"
         options={{
-          title: "Orders",
           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+          headerShown: false,
         }}
       />
     </Tabs>

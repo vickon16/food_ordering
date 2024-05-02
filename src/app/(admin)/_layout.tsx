@@ -7,14 +7,7 @@ import { Link } from "expo-router";
 import { Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Colors from "@/constants/Colors";
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={20} style={{ marginBottom: -3 }} {...props} />;
-}
+import { TabBarIcon } from "@/components/Icons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -33,37 +26,22 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="menu"
         options={{
-          title: "Menu",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="cutlery" color={color} />
           ),
-          headerRight: () => (
-            <Link href="/create" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="plus-square-o"
-                    size={25}
-                    color={Colors[colorScheme ?? "light"].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerShown: false,
         }}
       />
 
-      <Tabs.Screen name="[id]" options={{ href: null }} />
-      <Tabs.Screen name="create" options={{ href: null }} />
+      <Tabs.Screen name="index" options={{ href: null }} />
 
       <Tabs.Screen
         name="orders"
         options={{
-          title: "Orders",
           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+          headerShown: false,
         }}
       />
     </Tabs>
