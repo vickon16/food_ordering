@@ -38,8 +38,6 @@ export default function TabLayout() {
         }}
       />
 
-      <Tabs.Screen name="index" options={{ href: null }} />
-
       <Tabs.Screen
         name="orders"
         options={{

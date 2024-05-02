@@ -1,9 +1,16 @@
 // import { Order } from "@/app/types";
-import { Order } from "@/types";
+import { Order, OrderStatus } from "@/types";
 import products from "./products";
 import dayjs from "dayjs";
 
 const now = dayjs();
+
+export const orderStatusList: OrderStatus[] = [
+  "Cooking",
+  "Delivered",
+  "Delivering",
+  "New",
+];
 
 const orders: Order[] = [
   {

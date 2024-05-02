@@ -1,7 +1,8 @@
 import CartListItem from "@/components/CartListItem";
 import OrderListItem from "@/components/OrderListItem";
 import { Text, View } from "@/components/Themed";
-import orders from "@/constants/appData/orders";
+import Colors from "@/constants/Colors";
+import orders, { orderStatusList } from "@/constants/appData/orders";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { FlatList, StyleSheet } from "react-native";
@@ -36,7 +37,30 @@ const OrderIdScreen = () => {
               gap: 10,
             }}
             // ListHeaderComponent={() => <></> }
-            // ListFooterComponent={() => <></> }
+            ListFooterComponent={() => (
+              <>
+                <Text style={{ fontWeight: "bold" }}>Status</Text>
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                  {orderStatusList.map((status) => (
+                    <Text
+                      key={status}
+                      onPress={() => console.warn("Update status")}
+                      style={{
+                        ...styles.orderStatusText,
+                        backgroundColor:
+                          order.status === status
+                            ? Colors.light.tint
+                            : "transparent",
+                        color:
+                          order.status === status ? "white" : Colors.light.tint,
+                      }}
+                    >
+                      {status}
+                    </Text>
+                  ))}
+                </View>
+              </>
+            )}
           />
         )}
       </View>
@@ -54,6 +78,14 @@ const styles = StyleSheet.create({
   noOrderText: {
     color: "gray",
     alignSelf: "center",
+    marginVertical: 10,
+  },
+  orderStatusText: {
+    borderColor: Colors.light.tint,
+    borderWidth: 1,
+    padding: 8,
+    fontSize: 12,
+    borderRadius: 5,
     marginVertical: 10,
   },
 });

@@ -73,7 +73,7 @@ const SignUpScreen = () => {
 
       <Text style={styles.footerText}>
         Already have an account?{" "}
-        <Link href="/(auth)/" style={styles.footerTextLink}>
+        <Link href="/signIn" style={styles.footerTextLink}>
           Sign In
         </Link>
       </Text>

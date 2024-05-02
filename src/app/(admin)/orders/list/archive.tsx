@@ -10,7 +10,7 @@ const Orders = () => {
     <View>
       <Stack.Screen
         options={{
-          title: "Orders",
+          title: "InActive",
         }}
       />
 
