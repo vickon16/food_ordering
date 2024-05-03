@@ -1,14 +1,31 @@
 import Button from "@/components/Button";
 import Colors from "@/constants/Colors";
+import { supabase } from "@/lib/supabase";
 import { Link, Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 
 const SignUpScreen = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const signUpWithEmail = async () => {
+    if (!validateInput()) return;
+    setIsLoading(true);
+
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      setIsLoading(false);
+      return setError(error.message);
+    }
+
+    setIsLoading(false);
+    resetFields();
+  };
 
   const resetFields = () => {
     setEmail("");
@@ -25,13 +42,11 @@ const SignUpScreen = () => {
       setError("Password is required");
       return false;
     }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return false;
+    }
     return true;
-  };
-
-  const onSubmit = () => {
-    if (!validateInput()) return;
-
-    resetFields();
   };
 
   return (
@@ -51,7 +66,6 @@ const SignUpScreen = () => {
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Email</Text>
         <TextInput
-          secureTextEntry
           placeholder="email"
           style={styles.input}
           value={email}
@@ -61,19 +75,34 @@ const SignUpScreen = () => {
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Password</Text>
         <TextInput
+          secureTextEntry
           placeholder="password"
           style={styles.input}
           value={password}
           onChangeText={setPassword}
         />
       </View>
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Confirm Password</Text>
+        <TextInput
+          secureTextEntry
+          placeholder="confirm password"
+          style={styles.input}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+      </View>
 
       {error && <Text style={{ color: "red" }}>{error}</Text>}
-      <Button text="Sign Up" onPress={onSubmit} />
+      <Button
+        text={isLoading ? "Creating..." : "Create Account"}
+        disabled={isLoading}
+        onPress={signUpWithEmail}
+      />
 
       <Text style={styles.footerText}>
         Already have an account?{" "}
-        <Link href="/signIn" style={styles.footerTextLink}>
+        <Link href="/signin" style={styles.footerTextLink}>
           Sign In
         </Link>
       </Text>

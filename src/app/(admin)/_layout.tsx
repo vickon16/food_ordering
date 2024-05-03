@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
@@ -8,9 +8,12 @@ import { Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Colors from "@/constants/Colors";
 import { TabBarIcon } from "@/components/Icons";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { session, isAdmin } = useAuth();
+  if (!session || !isAdmin) return <Redirect href="/" />;
 
   return (
     <Tabs

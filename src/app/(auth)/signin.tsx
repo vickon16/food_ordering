@@ -1,14 +1,37 @@
 import Button from "@/components/Button";
 import Colors from "@/constants/Colors";
-import { Link, Stack, useRouter } from "expo-router";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/AuthProvider";
+import { Link, Redirect, Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 const SignInScreen = () => {
+  const { session } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (session) return <Redirect href="/" />;
+
+  const signInWithEmail = async () => {
+    if (!validateInput()) return;
+    setIsLoading(true);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      setIsLoading(false);
+      return setError(error.message);
+    }
+
+    setIsLoading(false);
+    resetFields();
+  };
 
   const resetFields = () => {
     setEmail("");
@@ -26,12 +49,6 @@ const SignInScreen = () => {
       return false;
     }
     return true;
-  };
-
-  const onSubmit = () => {
-    if (!validateInput()) return;
-
-    resetFields();
   };
 
   return (
@@ -69,7 +86,11 @@ const SignInScreen = () => {
       </View>
 
       {error && <Text style={{ color: "red" }}>{error}</Text>}
-      <Button text="Sign In" onPress={onSubmit} />
+      <Button
+        disabled={isLoading}
+        text={isLoading ? "Signin In..." : "Sign In"}
+        onPress={signInWithEmail}
+      />
 
       <Text style={styles.footerText}>
         Don't have an account?{" "}

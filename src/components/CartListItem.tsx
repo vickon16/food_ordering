@@ -9,7 +9,7 @@ import CartButton from "./Button";
 
 type CartListItemProps = {
   cartItem: CartItem;
-  noFunction: boolean;
+  noFunction?: boolean;
 };
 
 const CartListItem = ({ cartItem, noFunction }: CartListItemProps) => {
