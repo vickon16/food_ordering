@@ -1,21 +1,37 @@
-import { View, Text, StyleSheet, TextInput, Image, Alert } from "react-native";
-import React, { useState } from "react";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { FontAwesome5 } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
+import {
+  useDeleteProduct,
+  useInsertProduct,
+  useQueryProductId,
+  useUpdateProduct,
+} from "@/api/products";
 import Button from "@/components/Button";
-import products, { defaultPizzaImage } from "@/constants/appData/products";
+import Colors from "@/constants/Colors";
+import { defaultPizzaImage } from "@/constants/appData/products";
 import * as ImagePicker from "expo-image-picker";
-import { HeaderLeft } from "@/components/Icons";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
 
 const CreateProductScreen = () => {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [error, setError] = useState("");
-  const [image, setImage] = useState<string | null>(null);
-
   const { menuId } = useLocalSearchParams();
+  const id = menuId
+    ? typeof menuId === "string"
+      ? menuId
+      : menuId[0]
+    : undefined;
+  const { data: defaultProduct } = useQueryProductId(id);
+
+  const [name, setName] = useState(defaultProduct?.name || "");
+  const [price, setPrice] = useState(defaultProduct?.price.toString() || "");
+  const [error, setError] = useState("");
+  const [image, setImage] = useState<string | null>(
+    defaultProduct?.image || null
+  );
+
+  const insertProduct = useInsertProduct();
+  const updateProduct = useUpdateProduct();
+  const deleteProduct = useDeleteProduct();
 
   const resetFields = () => {
     setName("");
@@ -52,17 +68,31 @@ const CreateProductScreen = () => {
     return true;
   };
 
+  const settled = {
+    onSettled: () => {
+      resetFields();
+      router.replace("/(admin)/menu");
+    },
+    onError: () => {
+      setError("Error Mutating Data");
+    },
+  };
+
   const onSubmit = () => {
     if (!validateInput()) return;
 
-    if (!!menuId) {
+    if (!!id) {
+      updateProduct.mutate(
+        { id, name, price: parseFloat(price), image },
+        settled
+      );
     } else {
+      insertProduct.mutate({ name, price: parseFloat(price), image }, settled);
     }
-
-    resetFields();
   };
 
   const confirmDelete = () => {
+    if (!id) return;
     Alert.alert(
       "Delete Product",
       "Are you sure you want to delete this product?",
@@ -71,22 +101,19 @@ const CreateProductScreen = () => {
         {
           text: "Delete",
           style: "destructive",
-          onPress: onDelete,
+          onPress: () => {
+            deleteProduct.mutate(id, settled);
+          },
         },
       ]
     );
-  };
-
-  const onDelete = () => {
-    if (!menuId) return;
-    console.warn("delete");
   };
 
   return (
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          headerTitle: !!menuId ? "Updating Product" : "Create Product",
+          headerTitle: !!id ? "Updating Product" : "Create Product",
         }}
       />
 
@@ -121,11 +148,29 @@ const CreateProductScreen = () => {
         />
       </View>
 
-      {error && <Text style={{ color: "red" }}>{error}</Text>}
-      <Button text={!!menuId ? "Update" : "Create"} onPress={onSubmit} />
-      {!!menuId && (
-        <Text style={styles.textButton} onPress={confirmDelete}>
-          Delete
+      {(insertProduct.error || error) && (
+        <Text style={{ color: "red" }}>{error}</Text>
+      )}
+      <Button
+        text={
+          !!id
+            ? updateProduct.isPending
+              ? "Updating..."
+              : "Update"
+            : insertProduct.isPending
+            ? "Creating..."
+            : "Create"
+        }
+        disabled={updateProduct.isPending || insertProduct.isPending}
+        onPress={onSubmit}
+      />
+      {!!id && (
+        <Text
+          style={styles.textButton}
+          disabled={deleteProduct.isPending}
+          onPress={confirmDelete}
+        >
+          {deleteProduct.isPending ? "Deleting..." : "Delete"}
         </Text>
       )}
     </View>

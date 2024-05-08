@@ -1,12 +1,22 @@
-import { View } from "@/components/Themed";
-import Colors from "@/constants/Colors";
+import { useQueryProducts } from "@/api/products";
 import ProductListItem from "@/components/ProductListItem";
-import products from "@/constants/appData/products";
+import { Text, View } from "@/components/Themed";
+import Colors from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, Stack } from "expo-router";
-import { FlatList, Pressable, ScrollView } from "react-native";
+import { ActivityIndicator, FlatList, Pressable } from "react-native";
 
 export default function MenuScreen() {
+  const { data: products, error, isLoading } = useQueryProducts();
+
+  if (isLoading)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.light.text} />
+      </View>
+    );
+  if (error) return <Text>Failed to fetch products</Text>;
+
   return (
     <View style={{ flex: 1 }}>
       <Stack.Screen

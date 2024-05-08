@@ -1,12 +1,13 @@
+import { useQueryProductId } from "@/api/products";
 import Button from "@/components/Button";
 import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
-import products, { defaultPizzaImage } from "@/constants/appData/products";
+import { defaultPizzaImage } from "@/constants/appData/products";
 import { useCart } from "@/providers/CartProvider";
 import { PizzaSize } from "@/types";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { Image, StyleSheet } from "react-native";
+import { ActivityIndicator, Image, StyleSheet } from "react-native";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -16,8 +17,17 @@ const ProductIdScreen = () => {
   const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
 
   const { menuId } = useLocalSearchParams();
-  const product = products.find((product) => product.id === menuId);
-  if (!product) return <Text>Product not found</Text>;
+  const id = typeof menuId === "string" ? menuId : menuId[0];
+  const { data: product, error, isLoading } = useQueryProductId(id);
+
+  if (isLoading)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.light.text} />
+      </View>
+    );
+
+  if (error || !product) return <Text>Product not found</Text>;
 
   const addToCart = () => {
     onAddItem(product, selectedSize);

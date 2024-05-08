@@ -1,7 +1,7 @@
 import Colors from "@/constants/Colors";
 import products, { defaultPizzaImage } from "@/constants/appData/products";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Image, Pressable, StyleSheet } from "react-native";
+import { ActivityIndicator, Image, Pressable, StyleSheet } from "react-native";
 import { View, Text } from "@/components/Themed";
 import { useState } from "react";
 import Button from "@/components/Button";
@@ -10,14 +10,24 @@ import { useCart } from "@/providers/CartProvider";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { HeaderLeft } from "@/components/Icons";
+import { useQueryProductId } from "@/api/products";
 
 const ProductIdScreen = () => {
   const { onAddItem } = useCart();
   const router = useRouter();
 
   const { menuId } = useLocalSearchParams();
-  const product = products.find((product) => product.id === menuId);
-  if (!product) return <Text>Product not found</Text>;
+  const id = typeof menuId === "string" ? menuId : menuId[0];
+  const { data: product, error, isLoading } = useQueryProductId(id);
+
+  if (isLoading)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.light.text} />
+      </View>
+    );
+
+  if (error || !product) return <Text>Product not found</Text>;
 
   return (
     <View style={styles.container}>

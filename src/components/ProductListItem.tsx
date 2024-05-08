@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     flex: 1,
+    textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
     maxWidth: "50%",
   },
   title: {
