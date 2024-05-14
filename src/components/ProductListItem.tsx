@@ -1,13 +1,14 @@
-import { Product } from "@/types";
+import { Tables } from "@/types";
 import { Image, Pressable, StyleSheet } from "react-native";
 import { Link, useSegments } from "expo-router";
 
 import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
 import { defaultPizzaImage } from "../constants/appData/products";
+import RemoteImage from "./RemoteImage";
 
 type Props = {
-  product: Product;
+  product: Tables<"products">;
 };
 
 const ProductListItem = ({ product }: Props) => {
@@ -23,9 +24,11 @@ const ProductListItem = ({ product }: Props) => {
       asChild
     >
       <Pressable style={styles.container}>
-        <Image
-          source={{ uri: product.image || defaultPizzaImage }}
+        <RemoteImage
+          fallback={defaultPizzaImage}
+          path={product.image}
           style={styles.image}
+          resizeMode="contain"
         />
         <Text style={styles.title}>{product.name}</Text>
         <Text style={styles.price}>${product.price}</Text>
@@ -38,7 +41,7 @@ export default ProductListItem;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    // backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
     flex: 1,

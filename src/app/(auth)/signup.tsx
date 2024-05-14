@@ -3,7 +3,8 @@ import Colors from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { Link, Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, View } from "@/components/Themed";
+import { Alert, StyleSheet, TextInput } from "react-native";
 
 const SignUpScreen = () => {
   const router = useRouter();

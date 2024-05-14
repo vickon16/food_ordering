@@ -1,22 +1,20 @@
+import { useQueryProducts } from "@/api/products";
+import ActivityIndicatorCenter from "@/components/ActivityIndicatorCenter";
+import ProductListItem from "@/components/ProductListItem";
 import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
-import ProductListItem from "@/components/ProductListItem";
+import { supabase } from "@/lib/supabase";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, Stack } from "expo-router";
-import { ActivityIndicator, FlatList, Pressable } from "react-native";
-import { useQueryProducts } from "@/api/products";
+import { FlatList, Pressable } from "react-native";
 
 export default function MenuScreen() {
   const { data: products, error, isLoading } = useQueryProducts();
 
-  if (isLoading)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={Colors.light.text} />
-      </View>
-    );
-
+  if (isLoading) return <ActivityIndicatorCenter />;
   if (error) return <Text>Failed to fetch products</Text>;
+
+  console.log(products);
 
   return (
     <View style={{ flex: 1 }}>
@@ -24,18 +22,35 @@ export default function MenuScreen() {
         options={{
           title: "Menu",
           headerRight: () => (
-            <Link href="/(admin)/menu/create" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="plus-square-o"
-                    size={25}
-                    color={Colors.light.text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+            <View
+              style={{ flexDirection: "row", gap: 2, alignItems: "center" }}
+            >
+              <Link href="/(admin)/menu/create" asChild>
+                <Pressable>
+                  {({ pressed }) => (
+                    <FontAwesome
+                      name="plus-square-o"
+                      size={25}
+                      color={Colors.light.text}
+                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                    />
+                  )}
+                </Pressable>
+              </Link>
+              <Text
+                style={{
+                  paddingHorizontal: 8,
+                  paddingVertical: 6,
+                  backgroundColor: Colors.light.text,
+                  color: Colors.light.background,
+                  borderRadius: 4,
+                  fontSize: 12,
+                }}
+                onPress={async () => await supabase.auth.signOut()}
+              >
+                Sign Out
+              </Text>
+            </View>
           ),
         }}
       />

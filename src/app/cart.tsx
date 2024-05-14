@@ -1,12 +1,38 @@
 import { StatusBar } from "expo-status-bar";
-import { FlatList, Image, Platform, StyleSheet } from "react-native";
+import { Alert, FlatList, Image, Platform, StyleSheet } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { useCart } from "@/providers/CartProvider";
 import CartListItem from "@/components/CartListItem";
 import Button from "@/components/Button";
+import { useInsertOrder } from "@/api/orders";
+import { useRouter } from "expo-router";
 
 export default function CartScreen() {
-  const { items, totalPrice, totalQuantity } = useCart();
+  const { items, totalPrice, totalQuantity, clearCart } = useCart();
+  const insertOrder = useInsertOrder();
+  const router = useRouter();
+
+  const checkout = () => {
+    insertOrder.mutate(
+      {
+        newOrder: { total: totalPrice },
+        orderItems: items.map((items) => {
+          const { product, ...rest } = items;
+          return rest;
+        }),
+      },
+      {
+        onSuccess: () => {
+          clearCart();
+          router.push(`/(user)/orders`);
+        },
+      }
+    );
+  };
+
+  if (insertOrder.error) {
+    console.warn(insertOrder.error.message);
+  }
 
   return (
     <View style={styles.container}>
@@ -40,7 +66,11 @@ export default function CartScreen() {
         </Text>
       </View>
 
-      <Button text="Checkout" />
+      <Button
+        text={insertOrder.isPending ? "Checking Out..." : "Checkout"}
+        onPress={checkout}
+        disabled={insertOrder.isPending}
+      />
 
       {/* Use a light status bar on iOS to account for the black space above the cart */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />

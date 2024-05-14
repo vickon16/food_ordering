@@ -1,10 +1,11 @@
 import Button from "@/components/Button";
+import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { Link, Redirect, Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 
 const SignInScreen = () => {
   const { session } = useAuth();

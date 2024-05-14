@@ -1,14 +1,13 @@
-import { Order } from "@/types";
-import { Image, Pressable, StyleSheet } from "react-native";
-import { Link, useSegments } from "expo-router";
+import { Tables } from "@/types";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Link, useSegments } from "expo-router";
+import { Pressable, StyleSheet } from "react-native";
 
 import { Text, View } from "@/components/Themed";
-import Colors from "@/constants/Colors";
 import dayjs from "dayjs";
 
 type Props = {
-  order: Order;
+  order: Tables<"orders">;
 };
 
 dayjs.extend(relativeTime);
@@ -45,7 +44,6 @@ export default OrderListItem;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
     width: "100%",

@@ -10,7 +10,9 @@ import { defaultPizzaImage } from "@/constants/appData/products";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, View } from "@/components/Themed";
+import { Alert, Image, StyleSheet, TextInput } from "react-native";
+import { uploadImage } from "@/lib/utils";
 
 const CreateProductScreen = () => {
   const router = useRouter();
@@ -78,16 +80,29 @@ const CreateProductScreen = () => {
     },
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!validateInput()) return;
+
+    let imagePath;
+    if (image) {
+      imagePath = await uploadImage(image);
+    }
 
     if (!!id) {
       updateProduct.mutate(
-        { id, name, price: parseFloat(price), image },
+        { id, name, price: parseFloat(price), image: imagePath },
         settled
       );
     } else {
-      insertProduct.mutate({ name, price: parseFloat(price), image }, settled);
+      let imagePath;
+      if (image) {
+        imagePath = await uploadImage(image);
+      }
+
+      insertProduct.mutate(
+        { name, price: parseFloat(price), image: imagePath },
+        settled
+      );
     }
   };
 

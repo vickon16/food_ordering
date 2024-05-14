@@ -1,11 +1,12 @@
+import { Database } from "@/database.types";
 import { supabase } from "@/lib/supabase";
-import { Product } from "@/types";
+import { InsertTables, Tables, UpdateTables } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useQueryProducts = () => {
   return useQuery({
     queryKey: ["products"],
-    queryFn: async (): Promise<Product[]> => {
+    queryFn: async (): Promise<Tables<"products">[]> => {
       const { data, error } = await supabase.from("products").select("*");
       if (error) throw new Error(error.message);
       return data;
@@ -17,11 +18,11 @@ export const useQueryProductId = (id: string | undefined) => {
   return useQuery({
     enabled: !!id,
     queryKey: ["products", id],
-    queryFn: async (): Promise<Product> => {
+    queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("id", id)
+        .eq("id", id!)
         .single();
       if (error) throw new Error(error.message);
       return data;
@@ -34,10 +35,11 @@ export const useInsertProduct = () => {
 
   return useMutation({
     mutationKey: ["products"],
-    mutationFn: async (newProduct: Omit<Product, "id">): Promise<Product> => {
+    mutationFn: async (newProduct: InsertTables<"products">) => {
       const { data, error } = await supabase
         .from("products")
         .insert(newProduct)
+        .select()
         .single();
       if (error) throw new Error(error.message);
       return data;
@@ -53,7 +55,9 @@ export const useUpdateProduct = () => {
 
   return useMutation({
     mutationKey: ["products"],
-    mutationFn: async (newProduct: Product): Promise<Product> => {
+    mutationFn: async (
+      newProduct: UpdateTables<"products"> & { id: string }
+    ) => {
       const { data, error } = await supabase
         .from("products")
         .update(newProduct)

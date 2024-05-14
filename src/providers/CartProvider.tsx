@@ -1,4 +1,4 @@
-import { CartItem, PizzaSize, Product, QuantityAction } from "@/types";
+import { CartItem, QuantityAction, Sizes, Tables } from "@/types";
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 import uuid from "react-native-uuid";
 
@@ -6,9 +6,10 @@ export type CartType = {
   items: CartItem[];
   totalPrice: number;
   totalQuantity: number;
-  onAddItem: (product: Product, size: PizzaSize) => void;
+  onAddItem: (product: Tables<"products">, size: Sizes) => void;
   onRemoveItem: (id: string) => void;
   onUpdateQuantity: (action: QuantityAction, id: string) => void;
+  clearCart: () => void;
 };
 
 const cartInitialState: CartType = {
@@ -18,6 +19,7 @@ const cartInitialState: CartType = {
   onAddItem: () => {},
   onRemoveItem: () => {},
   onUpdateQuantity: () => {},
+  clearCart: () => {},
 };
 
 const CartContext = createContext<CartType>(cartInitialState);
@@ -34,16 +36,21 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     items.reduce((acc, item) => acc + item.quantity, 0).toFixed(2)
   );
 
-  const onAddItem = (product: Product, size: PizzaSize) => {
+  const clearCart = () => {
+    setItems([]);
+  };
+
+  const onAddItem = (product: Tables<"products">, size: Sizes) => {
     const newCartItem: CartItem = {
       id: uuid.v4() as string,
       product,
+      product_id: product.id,
       size,
       quantity: 1,
     };
 
     const itemExists = items.find(
-      (item) => item.product.id === product.id && item.size === size
+      (item) => item.product_id === product.id && item.size === size
     );
     if (itemExists) {
       return onUpdateQuantity("inc", itemExists.id);
@@ -78,7 +85,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
         );
         break;
       default:
-        console.log("Invalid action");
+        console.warn("Invalid action");
         break;
     }
   };
@@ -92,6 +99,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
         onAddItem,
         onUpdateQuantity,
         onRemoveItem,
+        clearCart,
       }}
     >
       {children}

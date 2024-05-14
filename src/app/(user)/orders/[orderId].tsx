@@ -1,16 +1,22 @@
+import { useQueryOrderId } from "@/api/orders";
+import ActivityIndicatorCenter from "@/components/ActivityIndicatorCenter";
 import CartListItem from "@/components/CartListItem";
+import OrderDisplayItem from "@/components/OrderDisplayItem";
 import OrderListItem from "@/components/OrderListItem";
 import { Text, View } from "@/components/Themed";
-import orders from "@/constants/appData/orders";
+import Colors from "@/constants/Colors";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { FlatList, StyleSheet } from "react-native";
 
 const OrderIdScreen = () => {
   const { orderId } = useLocalSearchParams();
+  const id = typeof orderId === "string" ? orderId : orderId[0];
+  const { data: order, isLoading, error } = useQueryOrderId(parseFloat(id));
 
-  const order = orders.find((order) => order.id === orderId);
-  if (!order) return <Text>Order Not found</Text>;
+  if (isLoading) return <ActivityIndicatorCenter />;
+
+  if (error || !order) return <Text>Failed to fetch order</Text>;
 
   return (
     <View style={styles.container}>
@@ -29,7 +35,7 @@ const OrderIdScreen = () => {
           <FlatList
             data={order.order_items}
             renderItem={({ item }) => (
-              <CartListItem key={item.id} cartItem={item} noFunction />
+              <OrderDisplayItem key={item.id} orderItem={item} />
             )}
             contentContainerStyle={{
               padding: 10,

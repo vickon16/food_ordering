@@ -1,15 +1,14 @@
-import { View, Text } from "@/components/Themed";
+import ActivityIndicatorCenter from "@/components/ActivityIndicatorCenter";
+import { View } from "@/components/Themed";
+import { useAuth } from "@/providers/AuthProvider";
+import { Link, Redirect } from "expo-router";
 import React from "react";
 import Button from "../components/Button";
-import { Link, Redirect } from "expo-router";
-import { useAuth } from "@/providers/AuthProvider";
-import { ActivityIndicator } from "react-native";
-import { supabase } from "@/lib/supabase";
 
 const RootIndex = () => {
   const { session, loadingSession, isAdmin } = useAuth();
 
-  if (loadingSession) return <ActivityIndicator size="small" />;
+  if (loadingSession) return <ActivityIndicatorCenter />;
 
   if (!session) {
     return <Redirect href={"/signin"} />;

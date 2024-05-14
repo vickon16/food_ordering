@@ -1,32 +1,28 @@
 import { useQueryProductId } from "@/api/products";
+import ActivityIndicatorCenter from "@/components/ActivityIndicatorCenter";
 import Button from "@/components/Button";
+import RemoteImage from "@/components/RemoteImage";
 import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
 import { defaultPizzaImage } from "@/constants/appData/products";
 import { useCart } from "@/providers/CartProvider";
-import { PizzaSize } from "@/types";
+import { Sizes } from "@/types";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Image, StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 
-const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
+const sizes: Sizes[] = ["S", "M", "L", "XL"];
 
 const ProductIdScreen = () => {
   const { onAddItem } = useCart();
   const router = useRouter();
-  const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
+  const [selectedSize, setSelectedSize] = useState<Sizes>("M");
 
   const { menuId } = useLocalSearchParams();
   const id = typeof menuId === "string" ? menuId : menuId[0];
   const { data: product, error, isLoading } = useQueryProductId(id);
 
-  if (isLoading)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={Colors.light.text} />
-      </View>
-    );
-
+  if (isLoading) return <ActivityIndicatorCenter />;
   if (error || !product) return <Text>Product not found</Text>;
 
   const addToCart = () => {
@@ -43,9 +39,11 @@ const ProductIdScreen = () => {
       />
 
       <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: product.image || defaultPizzaImage }}
+        <RemoteImage
+          fallback={defaultPizzaImage}
+          path={product.image}
           style={styles.image}
+          resizeMode="contain"
         />
       </View>
 

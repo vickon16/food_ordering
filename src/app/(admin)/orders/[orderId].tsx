@@ -1,17 +1,29 @@
-import CartListItem from "@/components/CartListItem";
+import { useQueryOrderId, useUpdateOrder } from "@/api/orders";
+import { useUpdateOrderSubscription } from "@/api/orders/subscription";
+import ActivityIndicatorCenter from "@/components/ActivityIndicatorCenter";
+import OrderDisplayItem from "@/components/OrderDisplayItem";
 import OrderListItem from "@/components/OrderListItem";
 import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
-import orders, { orderStatusList } from "@/constants/appData/orders";
+import { orderStatusList } from "@/constants/appData/orders";
+import { Status } from "@/types";
 import { Stack, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
 const OrderIdScreen = () => {
   const { orderId } = useLocalSearchParams();
+  const id = typeof orderId === "string" ? orderId : orderId[0];
+  const { data: order, isLoading, error } = useQueryOrderId(parseFloat(id));
+  const updateOrder = useUpdateOrder();
+  const [activeStatus, setActiveStatus] = useState<Status>(
+    order?.status || "New"
+  );
 
-  const order = orders.find((order) => order.id === orderId);
-  if (!order) return <Text>Order Not found</Text>;
+  useUpdateOrderSubscription(parseFloat(id));
+
+  if (isLoading) return <ActivityIndicatorCenter />;
+  if (error || !order) return <Text>Failed to fetch order</Text>;
 
   return (
     <View style={styles.container}>
@@ -30,7 +42,7 @@ const OrderIdScreen = () => {
           <FlatList
             data={order.order_items}
             renderItem={({ item }) => (
-              <CartListItem key={item.id} cartItem={item} noFunction />
+              <OrderDisplayItem key={item.id} orderItem={item} />
             )}
             contentContainerStyle={{
               padding: 10,
@@ -44,15 +56,18 @@ const OrderIdScreen = () => {
                   {orderStatusList.map((status) => (
                     <Text
                       key={status}
-                      onPress={() => console.warn("Update status")}
+                      onPress={() => {
+                        setActiveStatus(status);
+                        updateOrder.mutate({ id: parseFloat(id), status });
+                      }}
                       style={{
                         ...styles.orderStatusText,
                         backgroundColor:
-                          order.status === status
+                          activeStatus === status
                             ? Colors.light.tint
                             : "transparent",
                         color:
-                          order.status === status ? "white" : Colors.light.tint,
+                          activeStatus === status ? "white" : Colors.light.tint,
                       }}
                     >
                       {status}

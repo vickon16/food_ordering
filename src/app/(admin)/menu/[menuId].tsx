@@ -1,31 +1,19 @@
-import Colors from "@/constants/Colors";
-import products, { defaultPizzaImage } from "@/constants/appData/products";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { ActivityIndicator, Image, Pressable, StyleSheet } from "react-native";
-import { View, Text } from "@/components/Themed";
-import { useState } from "react";
-import Button from "@/components/Button";
-import { PizzaSize } from "@/types";
-import { useCart } from "@/providers/CartProvider";
-import { FontAwesome } from "@expo/vector-icons";
-import { Link } from "expo-router";
-import { HeaderLeft } from "@/components/Icons";
 import { useQueryProductId } from "@/api/products";
+import ActivityIndicatorCenter from "@/components/ActivityIndicatorCenter";
+import RemoteImage from "@/components/RemoteImage";
+import { Text, View } from "@/components/Themed";
+import Colors from "@/constants/Colors";
+import { defaultPizzaImage } from "@/constants/appData/products";
+import { FontAwesome } from "@expo/vector-icons";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Image, Pressable, StyleSheet } from "react-native";
 
 const ProductIdScreen = () => {
-  const { onAddItem } = useCart();
-  const router = useRouter();
-
   const { menuId } = useLocalSearchParams();
   const id = typeof menuId === "string" ? menuId : menuId[0];
   const { data: product, error, isLoading } = useQueryProductId(id);
 
-  if (isLoading)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={Colors.light.text} />
-      </View>
-    );
+  if (isLoading) return <ActivityIndicatorCenter />;
 
   if (error || !product) return <Text>Product not found</Text>;
 
@@ -51,9 +39,11 @@ const ProductIdScreen = () => {
       />
 
       <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: product.image || defaultPizzaImage }}
+        <RemoteImage
+          fallback={defaultPizzaImage}
+          path={product.image}
           style={styles.image}
+          resizeMode="contain"
         />
         <Text style={styles.title}>{product.name}</Text>
         <Text style={styles.price}>${product.price}</Text>

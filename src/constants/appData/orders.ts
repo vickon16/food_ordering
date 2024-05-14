@@ -1,16 +1,33 @@
 // import { Order } from "@/app/types";
-import { Order, OrderStatus } from "@/types";
-import products from "./products";
+import { CartItem } from "@/types";
+import products, { Product } from "./products";
 import dayjs from "dayjs";
 
 const now = dayjs();
 
+export type OrderStatus = "New" | "Cooking" | "Delivering" | "Delivered";
+
 export const orderStatusList: OrderStatus[] = [
-  "Cooking",
-  "Delivered",
-  "Delivering",
   "New",
+  "Cooking",
+  "Delivering",
+  "Delivered",
 ];
+
+export type PizzaSize = "S" | "M" | "L" | "XL";
+
+export type OrderItem = CartItem & {
+  order_id: string;
+};
+
+export type Order = {
+  id: string;
+  created_at: string;
+  total: number;
+  user_id: string;
+  status: OrderStatus;
+  order_items: OrderItem[];
+};
 
 const orders: Order[] = [
   {
@@ -26,6 +43,7 @@ const orders: Order[] = [
         size: "M",
         quantity: 2,
         product: products[0],
+        product_id: products[0].id,
       },
       {
         id: "246mm98d-90a9-4227-adff-e0vv5fc4b6b0",
@@ -33,6 +51,7 @@ const orders: Order[] = [
         size: "L",
         quantity: 1,
         product: products[1],
+        product_id: products[1].id,
       },
     ],
   },
@@ -49,6 +68,7 @@ const orders: Order[] = [
         size: "M",
         quantity: 2,
         product: products[3],
+        product_id: products[3].id,
       },
     ],
   },
@@ -65,6 +85,7 @@ const orders: Order[] = [
         size: "M",
         quantity: 1,
         product: products[3],
+        product_id: products[3].id,
       },
       {
         id: "9jfb8ecf-9kki-4da8-8366-4e92jj2e5ca4",
@@ -72,6 +93,7 @@ const orders: Order[] = [
         size: "M",
         quantity: 1,
         product: products[7],
+        product_id: products[7].id,
       },
       {
         id: "9jfb8ecf-934a-4da8-8366-49ufjj2e5ca4",
@@ -79,6 +101,7 @@ const orders: Order[] = [
         size: "L",
         quantity: 1,
         product: products[8],
+        product_id: products[8].id,
       },
     ],
   },
