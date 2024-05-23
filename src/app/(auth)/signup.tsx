@@ -24,6 +24,7 @@ const SignUpScreen = () => {
       return setError(error.message);
     }
 
+    router.push("/");
     setIsLoading(false);
     resetFields();
   };
@@ -31,6 +32,7 @@ const SignUpScreen = () => {
   const resetFields = () => {
     setEmail("");
     setPassword("");
+    setConfirmPassword("");
   };
 
   const validateInput = (): boolean => {

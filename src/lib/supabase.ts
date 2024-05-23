@@ -63,13 +63,28 @@ class LargeSecureStore {
   }
 }
 
-const supabaseUrl = "https://djqjebicluvppgnuywuv.supabase.co";
-const supabaseAnonKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqcWplYmljbHV2cHBnbnV5d3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQ2NjMzNzcsImV4cCI6MjAzMDIzOTM3N30.MmJsaH8pWqf2SIL5aTEwhYvRftbhMGyDWv-TozxP8To";
+// An alternative to the function above
+// const ExpoSecureStoreAdapter = {
+//   getItem: (key: string) => {
+//     return SecureStore.getItemAsync(key);
+//   },
+//   setItem: (key: string, value: string) => {
+//     SecureStore.setItemAsync(key, value);
+//   },
+//   removeItem: (key: string) => {
+//     SecureStore.deleteItemAsync(key);
+//   },
+// };
+
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON || "";
+
+console.log(supabaseUrl, supabaseAnonKey);
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: new LargeSecureStore(),
+    // storage: ExpoSecureStoreAdapter as any,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
